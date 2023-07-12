@@ -635,18 +635,23 @@ const review = () => {
               </div>
             ) : null}
 
-            <div className="row mb-3">
-              <div className="col-lg-12">
-                <div className="form-group">
-                  <label className="fw-bold mb-2">Comments for Reviewers</label>
-                  <textarea
-                    className="form-control height200"
-                    value={comments}
-                    onChange={handleonchange}
-                  ></textarea>
+            {isLogcard !== "" && (
+              <div className="row mb-3">
+                <div className="col-lg-12">
+                  <div className="form-group">
+                    <label className="fw-bold mb-2">
+                      Comments for Reviewers
+                    </label>
+                    <textarea
+                      className="form-control height200"
+                      value={comments}
+                      onChange={handleonchange}
+                    ></textarea>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
+
             <div className="row">
               <div className="col-lg-12">
                 <div className="form-group">
