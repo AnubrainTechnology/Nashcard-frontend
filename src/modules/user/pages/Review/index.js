@@ -9,24 +9,23 @@ import { AiOutlineDelete } from "react-icons/ai";
 import Axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const review = () =>
-{
-  const userid = localStorage.getItem( "userid" );
+const review = () => {
+  const userid = localStorage.getItem("userid");
   let totalcardqty = 0;
   //const orderid = reviewOrderId;
-  const [ reviewOrderId, setreviewOrderId ] = useState( "" );
+  const [reviewOrderId, setreviewOrderId] = useState("");
   const sucessMessage = (e) => toast.success(e);
   const [companyname, setcompanyname] = useState("");
   const [cardtype, setcardtype] = useState("");
   const [comments, setcomments] = useState("");
-  const [ agree, setagree ] = useState( "" );
-  const [ notLoggedcardcount, setnotLoggedcardcount ] = useState( "" );
-  const [ showcountbox, setshowcountbox ] = useState( false );
-  const [ isLogcard, setisLogcard ] = useState( "" );
+  const [agree, setagree] = useState("");
+  const [notLoggedcardcount, setnotLoggedcardcount] = useState("");
+  const [showcountbox, setshowcountbox] = useState(false);
+  const [isLogcard, setisLogcard] = useState("");
   const [updatecardid, setupdatecardid] = useState("");
-  const [ isEmpty, setIsEmpty ] = useState( true );
+  const [isEmpty, setIsEmpty] = useState(true);
   const [totaldv, settotaldv] = useState("");
-  
+
   //States for add order textboxes
   const [qty, setqty] = useState(120);
   const [cardyear, setCardyear] = useState(1909);
@@ -53,14 +52,11 @@ const review = () =>
     inputRef.current.click();
   };
 
-  
-
- useEffect(() => {
-   CreateReviewOrderid();
+  useEffect(() => {
+    CreateReviewOrderid();
   }, []);
 
-  const CreateReviewOrderid = () =>{
-    
+  const CreateReviewOrderid = () => {
     let newreviewid = "";
     const characters = "0123456789";
     const charactersLength = 5;
@@ -71,14 +67,13 @@ const review = () =>
       );
       counter += 1;
     }
-     
+
     let reviewPrefix = "PSA";
     reviewPrefix = reviewPrefix.slice(0, 3);
     newreviewid = reviewPrefix + "-" + newreviewid;
-    console.log( newreviewid );
-    setreviewOrderId( newreviewid );
-    
-  }
+    console.log(newreviewid);
+    setreviewOrderId(newreviewid);
+  };
 
   const handleonchange = (p) => {
     const txtcomments = p.target.value;
@@ -88,18 +83,14 @@ const review = () =>
   const onServiceLevelDDL = (e) => {
     var index = e.target.selectedIndex;
     if (index > 0) {
-      const dname = e.target[ index ].text;
-      const dvalue = e.target[ index ].value;
-      setcardtype( dname );
-      if ( dvalue == 1 )
-      {
-        setisLogcard(true)
+      const dname = e.target[index].text;
+      const dvalue = e.target[index].value;
+      setcardtype(dname);
+      if (dvalue == 1) {
+        setisLogcard(true);
+      } else {
+        setisLogcard(false);
       }
-      else
-      {
-        setisLogcard(false)
-      }
-      
     } else {
       alert("Please select Card Type");
     }
@@ -108,14 +99,12 @@ const review = () =>
   const handlegrcompanychange = async (evt) => {
     let grcmpname = evt.target.value;
     grcmpname = grcmpname.toUpperCase();
-    setcompanyname( "ps-23456" );
+    setcompanyname("ps-23456");
     CreateReviewOrderid();
   };
 
   const submitreview = async () => {
-   
-   
-    if ( comments && cardtype != null) {
+    if (comments && cardtype != null) {
       let result = await fetch(
         `${process.env.REACT_APP_API_URL}/submitreview`,
         {
@@ -128,7 +117,7 @@ const review = () =>
             comment: comments,
             isactive: true,
             status: "Created",
-            notloggedcadqty: notLoggedcardcount
+            notloggedcadqty: notLoggedcardcount,
           }),
           headers: {
             "content-type": "application/json",
@@ -144,8 +133,7 @@ const review = () =>
     }
   };
 
-  const Addnewcard = async ( e ) =>
-  {
+  const Addnewcard = async (e) => {
     // CreateReviewOrderid();
     if (carduploadfilename) {
       e.preventDefault();
@@ -155,43 +143,48 @@ const review = () =>
         formValue.append("file", file);
         formValue.append("userid", userid);
         formValue.append("reviewid", reviewOrderId);
-        console.log( reviewOrderId );
-        
-        Axios.post(`${process.env.REACT_APP_API_URL}/uploadReviewCards`, formValue, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }).then((res) => {
+        console.log(reviewOrderId);
+
+        Axios.post(
+          `${process.env.REACT_APP_API_URL}/uploadReviewCards`,
+          formValue,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        ).then((res) => {
           getcardlist();
           sucessMessage("File Uploaded Sucessfully");
         });
       } else {
         alert("Select a valid file.");
       }
-    } else
-    {
-      
-      let result = await fetch(`${process.env.REACT_APP_API_URL}/addReviewcard`, {
-        method: "post",
-        body: JSON.stringify({
-          userid: userid,
-          reviewid: reviewOrderId,
-          qty: qty,
-          cardyear: cardyear,
-          brand: brand,
-          cardnumber: cardnumber,
-          playername: playername,
-          attribute: attribute,
-          totalDV: ntotalDv
-        }),
-        headers: {
-          "content-type": "application/json",
-        },
-      });
+    } else {
+      let result = await fetch(
+        `${process.env.REACT_APP_API_URL}/addReviewcard`,
+        {
+          method: "post",
+          body: JSON.stringify({
+            userid: userid,
+            reviewid: reviewOrderId,
+            qty: qty,
+            cardyear: cardyear,
+            brand: brand,
+            cardnumber: cardnumber,
+            playername: playername,
+            attribute: attribute,
+            totalDV: ntotalDv,
+          }),
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
       result = await result.json();
 
       if (result) {
-        getcardlist()
+        getcardlist();
         setIsEmpty(false);
         //setCardlistData(result.CardList);
         // setqty("");
@@ -208,7 +201,7 @@ const review = () =>
       }
     }
   };
-    const getcarddetails = async (_id) => {
+  const getcarddetails = async (_id) => {
     //write code here to get function and use filter in result
 
     let result = await fetch(
@@ -254,14 +247,17 @@ const review = () =>
     getcardlist();
   };
 
-   const getcardlist = async () => {
-    let result = await fetch(`${process.env.REACT_APP_API_URL}/getReviewcardlist`, {
-      method: "post",
-      body: JSON.stringify({ userid: userid, reviewid: reviewOrderId}),
-      headers: {
-        "content-type": "application/json",
-      },
-    });
+  const getcardlist = async () => {
+    let result = await fetch(
+      `${process.env.REACT_APP_API_URL}/getReviewcardlist`,
+      {
+        method: "post",
+        body: JSON.stringify({ userid: userid, reviewid: reviewOrderId }),
+        headers: {
+          "content-type": "application/json",
+        },
+      }
+    );
 
     result = await result.json();
     console.log(result);
@@ -272,8 +268,8 @@ const review = () =>
       setIsEmpty(true);
       // setCardlistData("");
     }
-   };
-  
+  };
+
   const handleFileChange = (event) => {
     const fileObj = event.target.files && event.target.files[0];
     setFile(event.target.files && event.target.files[0]);
@@ -412,240 +408,232 @@ const review = () =>
                   </select>
                 </div>
               </div>
-              {
-                isLogcard ? null
-                  :
-                  
-                    <div className="col-lg-6">
-                      <div className="form-group">
-                        <label className="mb-2 fw-bold">
-                       Not Logged Card Quantity
-                      </label>
-                      <input type="text" className="form-control" id="cardcountnotlooged"
-                        value={ notLoggedcardcount }
-                         onChange={(e) => setnotLoggedcardcount(e.target.value)}></input>
-                       </div>
-                    </div>
-                 
-                
-             }
-              
+              {isLogcard ? null : (
+                <div className="col-lg-6">
+                  <div className="form-group">
+                    <label className="mb-2 fw-bold">
+                      Not Logged Card Quantity
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="cardcountnotlooged"
+                      value={notLoggedcardcount}
+                      onChange={(e) => setnotLoggedcardcount(e.target.value)}
+                    ></input>
+                  </div>
+                </div>
+              )}
             </div>
-  
-            {
-              isLogcard ?
-                
-            
-            <div>
-            <div className="row orer-details">
-                <div className="Topl mb-3">
-                  <span className="heading-level-2">Add Cards</span>
-                </div>
-                <div className="row">
-                  <div className="theme-highlight-div mb-4 text-center">
-                    <div className="form-group mt-4 mb-4">
-                      <form className="text-center mb-2">
-                        <input
-                          style={{ display: "none" }}
-                          ref={inputRef}
-                          type="file"
-                          onChange={handleFileChange}
-                        />
-                        <Link
-                          className="text-theme mb-1 d-block text-decoration-none"
-                          onClick={handleClick}
-                        >
-                          <BiPlusCircle></BiPlusCircle> Select A CSV File To
-                          Upload
-                        </Link>
-                        <label className="mb-2">{carduploadfilename}</label>
-                        <center>
-                          {" "}
-                          <button
-                            className="submitbtn d-block w270 text-center"
-                            type="submit"
-                            onClick={Addnewcard}
-                          >
-                            Log Cards Via CSV
-                          </button>
-                        </center>
-                      </form>
-                      <p className="mb-1">Or</p>
-                      <p className="mb-1">
-                        Add match card below indivudaly by filling in all
-                        required fields.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-lg-1">
-                    <div className="form-group">
-                      <label>Qty</label>
-                      <input
-                        onChange={(e) => setqty(e.target.value)}
-                        type="text"
-                        className="form-control"
-                        value={qty}
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="col-lg-2">
-                    <div className="form-group">
-                      <label>Card year</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        onChange={(e) => setCardyear(e.target.value)}
-                        value={cardyear}
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="col-lg-1">
-                    <div className="form-group">
-                      <label>Brand</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        onChange={(e) => setbrand(e.target.value)}
-                        value={brand}
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="col-lg-2">
-                    <div className="form-group">
-                      <label>Card Number</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        onChange={(e) => setcardnumber(e.target.value)}
-                        value={cardnumber}
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="col-lg-2">
-                    <div className="form-group">
-                      <label>Player Name</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        onChange={(e) => setplayername(e.target.value)}
-                        value={playername}
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="col-lg-2">
-                    <div className="form-group">
-                      <label>Attributes/SN</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        onChange={(e) => setattribute(e.target.value)}
-                        value={attribute}
-                      ></input>
-                    </div>
-                  </div>
-                  <div className="col-lg-2">
-                    <div className="form-group">
-                      <label>Total Declard Value</label>
-                      <input
-                        type="text"
-                        onChange={(e) => nsettotaldv(e.target.value)}
-                        className="form-control"
-                        value={ntotalDv}
-                      ></input>
-                    </div>
-                  </div>
-                </div>
-                <div className="row">
-                  <div className="col-lg-4"></div>
-                  <div className="col-lg-4 d-block text-center">
-                    {updatebtn ? (
-                      <button
-                        className="submitbtn d-block mt-4 mt-2"
-                        type="submit"
-                        onClick={() => updatecarddetails(updatecardid)}
-                      >
-                        Update Logged Card Details
-                      </button>
-                    ) : (
-                      <button
-                        className="submitbtn d-block mt-4 mt-2"
-                        type="submit"
-                        onClick={Addnewcard}
-                      >
-                        Log Card
-                      </button>
-                    )}
 
-                    {/* <Link to="#" className="submitbtn d-block mt-4 mt-2">Log Card</Link> */}
+            {isLogcard ? (
+              <div>
+                <div className="row orer-details">
+                  <div className="Topl mb-3">
+                    <span className="heading-level-2">Add Cards</span>
                   </div>
-                  <div className="col-lg-4"></div>
+                  <div className="row">
+                    <div className="theme-highlight-div mb-4 text-center">
+                      <div className="form-group mt-4 mb-4">
+                        <form className="text-center mb-2">
+                          <input
+                            style={{ display: "none" }}
+                            ref={inputRef}
+                            type="file"
+                            onChange={handleFileChange}
+                          />
+                          <Link
+                            className="text-theme mb-1 d-block text-decoration-none"
+                            onClick={handleClick}
+                          >
+                            <BiPlusCircle></BiPlusCircle> Select A CSV File To
+                            Upload
+                          </Link>
+                          <label className="mb-2">{carduploadfilename}</label>
+                          <center>
+                            {" "}
+                            <button
+                              className="submitbtn d-block w270 text-center"
+                              type="submit"
+                              onClick={Addnewcard}
+                            >
+                              Log Cards Via CSV
+                            </button>
+                          </center>
+                        </form>
+                        <p className="mb-1">Or</p>
+                        <p className="mb-1">
+                          Add match card below indivudaly by filling in all
+                          required fields.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-lg-1">
+                      <div className="form-group">
+                        <label>Qty</label>
+                        <input
+                          onChange={(e) => setqty(e.target.value)}
+                          type="text"
+                          className="form-control"
+                          value={qty}
+                        ></input>
+                      </div>
+                    </div>
+                    <div className="col-lg-2">
+                      <div className="form-group">
+                        <label>Card year</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          onChange={(e) => setCardyear(e.target.value)}
+                          value={cardyear}
+                        ></input>
+                      </div>
+                    </div>
+                    <div className="col-lg-1">
+                      <div className="form-group">
+                        <label>Brand</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          onChange={(e) => setbrand(e.target.value)}
+                          value={brand}
+                        ></input>
+                      </div>
+                    </div>
+                    <div className="col-lg-2">
+                      <div className="form-group">
+                        <label>Card Number</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          onChange={(e) => setcardnumber(e.target.value)}
+                          value={cardnumber}
+                        ></input>
+                      </div>
+                    </div>
+                    <div className="col-lg-2">
+                      <div className="form-group">
+                        <label>Player Name</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          onChange={(e) => setplayername(e.target.value)}
+                          value={playername}
+                        ></input>
+                      </div>
+                    </div>
+                    <div className="col-lg-2">
+                      <div className="form-group">
+                        <label>Attributes/SN</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          onChange={(e) => setattribute(e.target.value)}
+                          value={attribute}
+                        ></input>
+                      </div>
+                    </div>
+                    <div className="col-lg-2">
+                      <div className="form-group">
+                        <label>Total Declard Value</label>
+                        <input
+                          type="text"
+                          onChange={(e) => nsettotaldv(e.target.value)}
+                          className="form-control"
+                          value={ntotalDv}
+                        ></input>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-lg-4"></div>
+                    <div className="col-lg-4 d-block text-center">
+                      {updatebtn ? (
+                        <button
+                          className="submitbtn d-block mt-4 mt-2"
+                          type="submit"
+                          onClick={() => updatecarddetails(updatecardid)}
+                        >
+                          Update Logged Card Details
+                        </button>
+                      ) : (
+                        <button
+                          className="submitbtn d-block mt-4 mt-2"
+                          type="submit"
+                          onClick={Addnewcard}
+                        >
+                          Log Card
+                        </button>
+                      )}
+
+                      {/* <Link to="#" className="submitbtn d-block mt-4 mt-2">Log Card</Link> */}
+                    </div>
+                    <div className="col-lg-4"></div>
+                  </div>
+                </div>
+                <div className="row mb-3 mt-3">
+                  <div className="Topl">
+                    <span className="heading-level-2">Your Logged Cards</span>
+                    {isEmpty ? (
+                      <label className="text-danger mt-3 fs-5 fw-semibold">
+                        No Card List Found For This Order. Looged Your Card for
+                        this order
+                      </label>
+                    ) : (
+                      <Table striped bordered hover className="mt-3">
+                        <thead>
+                          <tr>
+                            <th>Qty</th>
+                            <th>Card year</th>
+                            <th>Brand</th>
+                            <th>Card Number</th>
+                            <th>Player Name</th>
+                            <th>Attributes/SN</th>
+                            <th>Declared Value</th>
+                            <th>Edit</th>
+                            <th>DLT</th>
+                          </tr>
+
+                          {cardlistData.map((card) => (
+                            <tr key={card._id}>
+                              <td>{card.qty}</td>
+                              <td>{card.cardyear}</td>
+                              <td>{card.brand}</td>
+                              <td>{card.cardnumber}</td>
+                              <td>{card.playername}</td>
+                              <td>{card.attribute}</td>
+                              <td>{card.totalDV}</td>
+
+                              <td className="bg-primary text-white text-center font-30">
+                                <button
+                                  type="submit"
+                                  onClick={() => getcarddetails(card._id)}
+                                >
+                                  {" "}
+                                  <BiMessageEdit></BiMessageEdit>
+                                </button>
+                              </td>
+                              <td className="bg-danger text-white text-center heading-level-3 font-30">
+                                <button
+                                  type="submit"
+                                  onClick={() => deletecard(card._id)}
+                                >
+                                  {" "}
+                                  <AiOutlineDelete></AiOutlineDelete>
+                                </button>
+                              </td>
+                            </tr>
+                          ))}
+                        </thead>
+                      </Table>
+                    )}
+                  </div>
                 </div>
               </div>
-            <div className="row mb-3 mt-3">
-               <div className="Topl">
-                  <span className="heading-level-2">Your Logged Cards</span>
-                  {isEmpty ? (
-                    <label className="text-danger mt-3 fs-5 fw-semibold">
-                      No Card List Found For This Order. Looged Your Card for
-                      this order
-                    </label>
-                  ) : (
-                    <Table striped bordered hover className="mt-3">
-                      <thead>
-                        <tr>
-                          <th>Qty</th>
-                          <th>Card year</th>
-                          <th>Brand</th>
-                          <th>Card Number</th>
-                          <th>Player Name</th>
-                          <th>Attributes/SN</th>
-                          <th>Declared Value</th>
-                          <th>Edit</th>
-                          <th>DLT</th>
-                        </tr>
-
-                        {cardlistData.map((card) => (
-                          <tr key={card._id}>
-                            <td>{card.qty}</td>
-                            <td>{card.cardyear}</td>
-                            <td>{card.brand}</td>
-                            <td>{card.cardnumber}</td>
-                            <td>{card.playername}</td>
-                            <td>{card.attribute}</td>
-                            <td>{card.totalDV}</td>
-
-                            <td className="bg-primary text-white text-center font-30">
-                              <button
-                                type="submit"
-                                onClick={() => getcarddetails(card._id)}
-                              >
-                                {" "}
-                                <BiMessageEdit></BiMessageEdit>
-                              </button>
-                            </td>
-                            <td className="bg-danger text-white text-center heading-level-3 font-30">
-                              <button
-                                type="submit"
-                                onClick={() => deletecard(card._id)}
-                              >
-                                {" "}
-                                <AiOutlineDelete></AiOutlineDelete>
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </thead>
-                    </Table>
-                  )}
-                </div>
-
-                  </div>
-            </div>
-                :
-                null
-            }
+            ) : null}
 
             <div className="row mb-3">
               <div className="col-lg-12">
